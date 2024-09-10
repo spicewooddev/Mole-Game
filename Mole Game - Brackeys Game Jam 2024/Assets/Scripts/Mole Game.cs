@@ -41,6 +41,8 @@ public class MoleGame : MonoBehaviour
                 tileSprites[i,j] = go;
                 
                 go.transform.position = new Vector3(i-8, j-8, 0);
+                go.transform.localScale = new Vector2(0.5f, 0.5f);
+                go.transform.position = new Vector3((i-32) / 2.0f, (j-32) / 2.0f, 0);
                 
                 SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();
                 Texture2D texture = Resources.Load<Texture2D>("blank_square");
