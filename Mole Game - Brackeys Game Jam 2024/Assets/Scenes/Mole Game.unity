@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cd0c985559cdd1d1916b13d4f26c575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rainDropPhysicsMaterial: {fileID: 6200000, guid: 6a14cafa218032d338b84e2a476df09b, type: 2}
 --- !u!4 &148646214
 Transform:
   m_ObjectHideFlags: 0
@@ -373,7 +374,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f57957e8fd84c1bbaa82ad82aa203b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragSpeed: 2
 --- !u!1 &1558222120
 GameObject:
   m_ObjectHideFlags: 0
