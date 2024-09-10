@@ -17,6 +17,9 @@ public class MoleGame : MonoBehaviour
     TileType[,] tileTypes = new TileType[18, 18];
     GameObject[,] tileSprites = new GameObject[18, 18];
 
+    float timeSinceRainDrop = 0f;
+    float timeUntilRaidDrop = 1f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,7 +62,20 @@ public class MoleGame : MonoBehaviour
                 go.transform.position = new Vector3(i-9, j-9, 0);
                 
                 SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();
-                Texture2D texture = Resources.Load<Texture2D>("blank_square");
+                Texture2D texture;
+                if (tileTypes[i,j] == TileType.Dirt)
+                {
+                    texture = Resources.Load<Texture2D>("dirtWall");
+                }
+                else if (tileTypes[i,j] == TileType.Rock)
+                {
+                    texture = Resources.Load<Texture2D>("stoneWall");
+                }
+                else
+                {
+                    texture = Resources.Load<Texture2D>("blankWall");
+                }
+
                 Sprite sprite = Sprite.Create
                 (
                     texture,
@@ -74,7 +90,16 @@ public class MoleGame : MonoBehaviour
                     Rigidbody2D body = go.AddComponent<Rigidbody2D>();
                     body.gravityScale = 0f;
                     body.bodyType = RigidbodyType2D.Static;
+                    
                     BoxCollider2D collider = go.AddComponent<BoxCollider2D>();                    
+                }
+                else if (tileTypes[i,j] == TileType.Dirt)
+                {
+                    Rigidbody2D body = go.AddComponent<Rigidbody2D>();
+                    body.gravityScale = 0f;
+                    body.bodyType = RigidbodyType2D.Static;
+                    
+                    BoxCollider2D collider = go.AddComponent<BoxCollider2D>();
                 }
             }
         }
@@ -83,55 +108,32 @@ public class MoleGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateTileSprites();
+        timeSinceRainDrop += Time.deltaTime;
 
-        // Make a single rain drop (a whole bunch of times).
-        GameObject go = new GameObject("Rain Drop");
-        go.transform.localScale = new Vector2(0.1f, 0.1f);
-        go.transform.position = new Vector2(UnityEngine.Random.Range(-8.0f, 6.5f), 16);
-        
-        SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();
-        renderer.color = Color.blue;                    
-        Texture2D texture = Resources.Load<Texture2D>("blank_square");
-        Sprite sprite = Sprite.Create
-        (
-            texture,
-            new UnityEngine.Rect(0.0f,0.0f,texture.width,texture.height),
-            new Vector2(0.5f, 0.5f),
-            (float) texture.width
-        );
-        renderer.sprite = sprite;
-
-        go.AddComponent<Rigidbody2D>();
-        BoxCollider2D collider = go.AddComponent<BoxCollider2D>();
-        collider.sharedMaterial = rainDropPhysicsMaterial;
-    }
-
-    void UpdateTileSprites()
-    {           
-        for (int i = 0; i < tileTypes.GetLength(0); i++)
+        if (timeSinceRainDrop >= timeUntilRaidDrop)
         {
-            for (int j = 0; j < tileTypes.GetLength(1); j++)
-            {
-                GameObject go = tileSprites[i,j];
-                SpriteRenderer renderer = go.GetComponent<SpriteRenderer>();
-                if (tileTypes[i,j] == TileType.Dirt)
-                {
-                    renderer.color = new Color(139f / 256f, 69f / 256f, 19f / 256f, 1.0f);
-                }
-                else if (tileTypes[i,j] == TileType.Rock)
-                {
-                    renderer.color = Color.gray;
-                }
-                else if (tileTypes[i,j] == TileType.Open)
-                {
-                    renderer.color = Color.black;
-                }
-                else
-                {
-                    renderer.color = Color.red;                    
-                }
-            }
+            timeSinceRainDrop = 0f;
+
+            // Make a single rain drop (a whole bunch of times).
+            GameObject go = new GameObject("Rain Drop");
+            go.transform.localScale = new Vector2(0.2f, 0.2f);
+            go.transform.position = new Vector3(UnityEngine.Random.Range(-8.0f, 6.5f), 16, -1);
+            
+            SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();
+            renderer.color = Color.blue;                    
+            Texture2D texture = Resources.Load<Texture2D>("blank_square");
+            Sprite sprite = Sprite.Create
+            (
+                texture,
+                new UnityEngine.Rect(0.0f,0.0f,texture.width,texture.height),
+                new Vector2(0.5f, 0.5f),
+                (float) texture.width
+            );
+            renderer.sprite = sprite;
+
+            go.AddComponent<Rigidbody2D>();
+            CircleCollider2D collider = go.AddComponent<CircleCollider2D>();
+            collider.sharedMaterial = rainDropPhysicsMaterial;
         }
     }
 }

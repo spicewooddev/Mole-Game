@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class HandleDirtCollision : MonoBehaviour
 {
-    void OnTiggerEnter(Collider collider)
+    void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log("Toucing dirt!");
+        GameObject rainDrop = collider.gameObject;
+        Rigidbody2D body = rainDrop.GetComponent<Rigidbody2D>();
+        body.velocity *= 0.1f;
     }
 }

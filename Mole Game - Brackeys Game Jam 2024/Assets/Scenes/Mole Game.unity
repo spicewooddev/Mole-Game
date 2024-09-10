@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rainDropPhysicsMaterial: {fileID: 6200000, guid: 6a14cafa218032d338b84e2a476df09b, type: 2}
+  dirtPhysicsMaterial: {fileID: 6200000, guid: bfdb0148a80445fe0ba69b2a9f1ade48, type: 2}
 --- !u!4 &148646214
 Transform:
   m_ObjectHideFlags: 0
