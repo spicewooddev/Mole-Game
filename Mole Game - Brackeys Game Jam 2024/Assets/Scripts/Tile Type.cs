@@ -6,6 +6,5 @@ using UnityEngine;
 public class TileType
 {
     public string name;
-    public Texture2D texture;
-    public GameObject go;
+    public GameObject obj;
 }

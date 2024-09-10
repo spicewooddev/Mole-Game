@@ -2,21 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
-enum TileType
-{
-    Dirt,
-    Rock,
-    Open,
-    Ladder
-}
-*/
-
 public class MoleGame : MonoBehaviour
 {
     public TileType[] tileTypes;
-    public GameObject[,] tileSprites = new GameObject[24, 24];
-    public int[,] tiles = new int[24, 24];
+    public GameObject[,] tileSprites = new GameObject[20, 20];
+    public int[,] tiles = new int[20, 20];
 
     void Start()
     {
@@ -62,8 +52,7 @@ public class MoleGame : MonoBehaviour
             for (int column = 0; column < tiles.GetLength(1); column++)
             {
                 TileType tileType = tileTypes[tiles[row, column]];
-                GameObject go = (GameObject)Instantiate(tileType.go, new Vector3((row - 12) * 0.45f, (column - 12) * 0.45f, 0), Quaternion.identity);
-                go.transform.localScale = new Vector2(2f, 2f);
+                GameObject obj = (GameObject)Instantiate(tileType.obj, new Vector3((row - 10), (column - 10), 0), Quaternion.identity);
             }
         }
     }
