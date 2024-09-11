@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 enum TileType
 {
@@ -14,6 +16,8 @@ public class MoleGame : MonoBehaviour
 {
     public PhysicsMaterial2D rainDropPhysicsMaterial;
     public Camera mainCamera;
+    public TextMeshProUGUI savedText;
+    public TextMeshProUGUI deadText;
 
     TileType[,] tileTypes = new TileType[18, 18];
     GameObject[,] tileSprites = new GameObject[18, 18];
@@ -24,9 +28,16 @@ public class MoleGame : MonoBehaviour
     float timeSinceRainDrop = 0f;
     float timeUntilRaidDrop = 0.1f;
 
+    ulong numSavedMoles = 0;
+    ulong numDeadMoles = 0;
+
     // Start is called before the first frame update
     void Start()
     {
+        GameData gd = GameDataFileHandler.Load();
+        numSavedMoles = gd.molesSaved;
+        numDeadMoles = gd.molesDead;
+
         // Fill in the rock border and open sky
         for (int i = 1; i < tileTypes.GetLength(0) - 1; i++)
         {
@@ -145,6 +156,10 @@ public class MoleGame : MonoBehaviour
             selectedMole = null;
         }
 
+        if(Input.GetKey("n")) {
+            SceneManager.LoadScene("Mole Game", LoadSceneMode.Single);
+        }
+
         if (selectedMole)
         {
             Rigidbody2D body = selectedMole.GetComponent<Rigidbody2D>();
@@ -204,5 +219,15 @@ public class MoleGame : MonoBehaviour
             moles.Remove(deadMole);
             Destroy(deadMole);
         }
+
+        if(deadMoles.Count > 0)
+        {
+            numDeadMoles += (ulong)deadMoles.Count;
+            GameData gd = GameDataFileHandler.Load();
+            gd.molesDead = numDeadMoles;
+            GameDataFileHandler.Save(gd);
+        }
+
+        deadText.text = "Dead: " + numDeadMoles;
     }
 }
