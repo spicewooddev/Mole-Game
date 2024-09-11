@@ -13,12 +13,16 @@ enum TileType
 public class MoleGame : MonoBehaviour
 {
     public PhysicsMaterial2D rainDropPhysicsMaterial;
+    public Camera mainCamera;
 
     TileType[,] tileTypes = new TileType[18, 18];
     GameObject[,] tileSprites = new GameObject[18, 18];
 
+    List<GameObject> moles = new List<GameObject>();
+    GameObject selectedMole = null;
+
     float timeSinceRainDrop = 0f;
-    float timeUntilRaidDrop = 1f;
+    float timeUntilRaidDrop = 0.1f;
 
     // Start is called before the first frame update
     void Start()
@@ -41,13 +45,36 @@ public class MoleGame : MonoBehaviour
         {
             for (int j = 1; j < tileTypes.GetLength(1) - 1; j++)
             {
-                int pickTileType = UnityEngine.Random.Range(0, 3);
+                int pickTileType = UnityEngine.Random.Range(0, 6);
                 if (pickTileType == 0) {
                     tileTypes[i,j] = TileType.Dirt;
                 } else if (pickTileType == 1) {
                     tileTypes[i,j] = TileType.Rock;
                 } else {
                     tileTypes[i,j] = TileType.Open;
+
+                    GameObject go = new GameObject("Mole");
+                    go.AddComponent<HandleRainCollision>();
+
+                    go.transform.localScale = new Vector3(.25f, .25f, 1);
+                    go.transform.position = new Vector3(i-9, j-9, -1);
+                
+                    SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();
+                    Texture2D texture = Resources.Load<Texture2D>("moleStill");
+
+                    Sprite sprite = Sprite.Create
+                    (
+                        texture,
+                        new UnityEngine.Rect(0.0f,0.0f,texture.width,texture.height),
+                        new Vector2(0.5f, 0.5f),
+                        (float) texture.width
+                    );
+                    renderer.sprite = sprite;
+
+                    Rigidbody2D body = go.AddComponent<Rigidbody2D>();
+                    go.AddComponent<BoxCollider2D>();
+
+                    moles.Add(go);
                 }
             }
         }
@@ -108,6 +135,34 @@ public class MoleGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Hit TAB to select a random mole!
+        if(Input.GetKey("tab")) {
+            int randomIndex = UnityEngine.Random.Range(0, moles.Count);
+            selectedMole = moles[randomIndex];
+        }
+
+        if(Input.GetKey("escape")) {
+            selectedMole = null;
+        }
+
+        if (selectedMole)
+        {
+            Rigidbody2D body = selectedMole.GetComponent<Rigidbody2D>();
+            
+            if(Input.GetKey("a")) {
+                body.velocity += new Vector2(-0.1f, 0f);
+            }
+            if(Input.GetKey("d")) {
+                body.velocity += new Vector2(0.1f, 0f);
+            }
+            if(Input.GetKey("w")) {
+                body.velocity += new Vector2(0f, 0.5f);
+            }
+
+            // move camera to selected mole position
+            mainCamera.transform.position = new Vector3(selectedMole.transform.position.x, selectedMole.transform.position.y, -10);
+        }
+
         timeSinceRainDrop += Time.deltaTime;
 
         if (timeSinceRainDrop >= timeUntilRaidDrop)
@@ -134,6 +189,20 @@ public class MoleGame : MonoBehaviour
             go.AddComponent<Rigidbody2D>();
             CircleCollider2D collider = go.AddComponent<CircleCollider2D>();
             collider.sharedMaterial = rainDropPhysicsMaterial;
+        }
+
+        List<GameObject> deadMoles = new List<GameObject>();
+        foreach (var mole in moles)
+        {
+            if (mole.tag == "dead")
+            {
+                deadMoles.Add(mole);
+            }
+        }
+
+        foreach (var deadMole in deadMoles) {
+            moles.Remove(deadMole);
+            Destroy(deadMole);
         }
     }
 }
