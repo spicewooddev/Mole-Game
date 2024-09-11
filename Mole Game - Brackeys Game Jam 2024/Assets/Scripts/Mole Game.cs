@@ -228,6 +228,59 @@ public class MoleGame : MonoBehaviour
             GameDataFileHandler.Save(gd);
         }
 
+        List<GameObject> successMoles = new List<GameObject>();
+        foreach (var mole in moles)
+        {
+            if (mole.transform.position.y >= 10f)
+            {
+                successMoles.Add(mole);
+            }
+        }
+
+        foreach (var successMole in successMoles) {
+            moles.Remove(successMole);
+            Rigidbody2D bdy = successMole.GetComponent<Rigidbody2D>();
+            Vector2 velocity = bdy.velocity;
+            Vector2 position = successMole.transform.position;
+            Destroy(successMole);
+
+            for(int i = 0; i < 64; i++)
+            {
+                GameObject go = new GameObject("Confetti");
+
+                go.transform.localScale = new Vector3(.05f, .05f, -1);
+                go.transform.position = position;
+            
+                SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();
+                renderer.color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f));
+                Texture2D texture = Resources.Load<Texture2D>("blank_square");
+
+                Sprite sprite = Sprite.Create
+                (
+                    texture,
+                    new UnityEngine.Rect(0.0f,0.0f,texture.width,texture.height),
+                    new Vector2(0.5f, 0.5f),
+                    (float) texture.width
+                );
+                renderer.sprite = sprite;
+
+                Rigidbody2D body = go.AddComponent<Rigidbody2D>();
+                Vector2 jitter = new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+                body.velocity = velocity + jitter;
+                go.AddComponent<BoxCollider2D>();
+            }
+        }
+
+        if(successMoles.Count > 0)
+        {
+            numSavedMoles += (ulong)successMoles.Count;
+            GameData gd = GameDataFileHandler.Load();
+            gd.molesSaved = numSavedMoles;
+            GameDataFileHandler.Save(gd);
+        }
+
+
+        savedText.text = "Saved: " + numSavedMoles;
         deadText.text = "Dead: " + numDeadMoles;
     }
 }
