@@ -16,22 +16,22 @@ public class CameraOperations : MonoBehaviour
         Vector3 pos = transform.position;
         if (Input.GetKey("left"))
         {
-            pos.x -= 0.5f; 
+            pos.x -= 0.2f; 
         }
         
         if (Input.GetKey("right"))
         {
-            pos.x += 0.5f; 
+            pos.x += 0.2f; 
         }
 
         if (Input.GetKey("up"))
         {
-            pos.y += 0.5f; 
+            pos.y += 0.2f; 
         }
         
         if (Input.GetKey("down"))
         {
-            pos.y -= 0.5f; 
+            pos.y -= 0.2f; 
         }
 
         transform.position = pos;
