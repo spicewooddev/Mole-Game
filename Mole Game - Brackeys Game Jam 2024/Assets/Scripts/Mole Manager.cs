@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using UnityEditor.Build.Content;
-using UnityEditor.UIElements;
 using UnityEngine;
+using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 public class MoleManager : MonoBehaviour
@@ -44,12 +43,32 @@ public class MoleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //TODO: When MouseInput clicks on a mole,
+        //Make that mole selectedMole
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePosition = Input.mousePosition;
+            Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                // Use the hit variable to determine what was clicked on.
+                if (hit.transform.gameObject.tag == "mole")
+                {
+                    selectedMole = hit.transform.gameObject;
+                }
+            }
+        }
+
+        /*
         // Hit TAB to select a random mole!
         if (Input.GetKey("tab"))
         {
             int randomIndex = UnityEngine.Random.Range(0, moles.Count);
             selectedMole = moles[randomIndex];
         }
+        */
 
         if (Input.GetKey("escape"))
         {
@@ -68,17 +87,14 @@ public class MoleManager : MonoBehaviour
             if (Input.GetKey("a"))
             {
                 selectedMole.transform.position += new Vector3(-0.1f, 0f);
-                //body.velocity += new Vector2(-0.1f, 0f);
             }
             if (Input.GetKey("d"))
             {
                 selectedMole.transform.position += new Vector3(0.1f, 0f);
-                //body.velocity += new Vector2(0.1f, 0f);
             }
             if (Input.GetKey("w"))
             {
                 selectedMole.transform.position += new Vector3(0f, 0.5f);
-                //body.velocity += new Vector2(0f, 0.5f);
             }
 
             // move camera to selected mole position

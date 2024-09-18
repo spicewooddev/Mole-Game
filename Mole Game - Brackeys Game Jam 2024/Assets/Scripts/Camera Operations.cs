@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class CameraOperations : MonoBehaviour
 {
+    public int panSpeed = 10;
+
+    private Vector3 mouseOrigin;
+
+    //private bool isMouseDragging = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +21,32 @@ public class CameraOperations : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        MouseInputs();
+        ButtonInputs();
+    }
+
+    void MouseInputs()
+    {
+        //when the left-mouse button is PRESSED, this happens
+        if (Input.GetMouseButtonDown(0))
+        {
+            mouseOrigin = Input.mousePosition;
+        }
+
+        //when the left-mouse button is HELD DOWN, this happens
+        if (Input.GetMouseButton(0))
+        {
+            Vector3 delta = Input.mousePosition - mouseOrigin;
+
+            transform.position += new Vector3(-delta.x, -delta.y) * Time.deltaTime;
+
+            mouseOrigin = Input.mousePosition;
+        }
+    }
+
+    void ButtonInputs()
+    {
+        /*
         Vector3 pos = transform.position;
         if (Input.GetKey("left"))
         {
@@ -33,8 +67,9 @@ public class CameraOperations : MonoBehaviour
         {
             pos.y -= 0.2f; 
         }
+        */
 
-        transform.position = pos;
+        //transform.position = pos;
 
         if (Input.GetKey("-"))
         {
